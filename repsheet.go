@@ -5,6 +5,8 @@ import (
         "fmt"
         "github.com/repsheet/repsheet/Godeps/_workspace/src/github.com/fzzy/radix/redis"
         "time"
+        "os"
+        "syscall"
 )
 
 func printList(actorType string, list *redis.Reply) {
@@ -27,18 +29,19 @@ func main() {
 
         conn, err := redis.DialTimeout("tcp", "127.0.0.1:6379", time.Duration(10)*time.Second)
         if err != nil {
-                panic("Error connecting to Redis")
+                fmt.Println("Cannot connect to Redis, exiting.")
+                os.Exit(int(syscall.ECONNREFUSED))
         }
 
         if *listPtr == true {
                 whitelisted := conn.Cmd("KEYS", "*:repsheet:*:whitelisted")
-		printList("Whitelisted", whitelisted)
+                printList("Whitelisted", whitelisted)
 
                 blacklisted := conn.Cmd("KEYS", "*:repsheet:*:blacklisted")
-		printList("Blacklisted", blacklisted)
+                printList("Blacklisted", blacklisted)
 
                 marked := conn.Cmd("KEYS", "*:repsheet:*:marked")
-		printList("Marked", marked)
+                printList("Marked", marked)
         }
 
         if *blacklistPtr != "" {
