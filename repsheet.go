@@ -18,6 +18,17 @@ func printList(actorType string, list *redis.Reply) {
         }
 }
 
+func addToList(connection *redis.Client, list string, actor string, reason string) {
+        fmt.Printf("%sing %s\n", list, actor)
+        actorString := fmt.Sprintf("%s:repsheet:ip:%sed", actor, list)
+
+        if reason != "" {
+                connection.Cmd("SET", actorString, reason)
+        } else {
+                connection.Cmd("SET", actorString, "true")
+        }
+}
+
 func main() {
         listPtr := flag.Bool("list", false, "Show the contents of Repsheet")
         blacklistPtr := flag.String("blacklist", "", "Blacklist an actor")
@@ -45,36 +56,14 @@ func main() {
         }
 
         if *blacklistPtr != "" {
-                fmt.Println("Blacklisting", *blacklistPtr)
-                command := fmt.Sprintf("%s:repsheet:ip:blacklisted", *blacklistPtr)
-
-                if *reasonPtr != "" {
-                        conn.Cmd("SET", command, *reasonPtr)
-                } else {
-                        conn.Cmd("SET", command, "true")
-                }
-
+		addToList(conn, "blacklist", *blacklistPtr, *reasonPtr)
         }
 
         if *whitelistPtr != "" {
-                fmt.Println("Whitelisting", *whitelistPtr)
-                command := fmt.Sprintf("%s:repsheet:ip:whitelisted", *whitelistPtr)
-
-                if *reasonPtr != "" {
-                        conn.Cmd("SET", command, *reasonPtr)
-                } else {
-                        conn.Cmd("SET", command, "true")
-                }
+		addToList(conn, "whitelist", *whitelistPtr, *reasonPtr)
         }
 
         if *markPtr != "" {
-                fmt.Println("Marking", *markPtr)
-                command := fmt.Sprintf("%s:repsheet:ip:marked", *markPtr)
-
-                if *reasonPtr != "" {
-                        conn.Cmd("SET", command, *reasonPtr)
-                } else {
-                        conn.Cmd("SET", command, "true")
-                }
+		addToList(conn, "mark", *markPtr, *reasonPtr)
         }
 }
