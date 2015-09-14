@@ -11,12 +11,9 @@ $ go get github.com/repsheet/repsheet
 ## Usage
 
 ```
-$ repsheet -blacklist=1.1.1.1
-Blacklisting 1.1.1.1
-$ repsheet -whitelist=2.2.2.2
-Whitelisting 2.2.2.2
-$ repsheet -mark=3.3.3.3
-Marking 3.3.3.3
+$ repsheet -blacklist=1.1.1.1 -reason=cli
+$ repsheet -whitelist=2.2.2.2 -reason=cli
+$ repsheet -mark=3.3.3.3 -reason=cli
 $ repsheet -list
 Whitelisted Actors
   2.2.2.2:repsheet:ip:whitelisted
@@ -24,4 +21,8 @@ Blacklisted Actors
   1.1.1.1:repsheet:ip:blacklisted
 Marked Actors
   3.3.3.3:repsheet:ip:marked
+$ repsheet -status=1.1.1.1
+1.1.1.1 is blacklisted. Reason: cli
+$ repsheet -status=8.8.8.8
+8.8.8.8 is OK
 ```
