@@ -55,7 +55,6 @@ func printList(actorType string, list *redis.Reply) {
 }
 
 func addToList(connection *redis.Client, list string, actor string, reason string) {
-        fmt.Printf("%sing %s\n", list, actor)
         actorString := fmt.Sprintf("%s:repsheet:ip:%sed", actor, list)
 
         if reason != "" {
@@ -92,10 +91,10 @@ func status(connection *redis.Client, actor string) *Status {
 		return &Status{Type: Whitelisted, reason: str, actor: actor}
 	} else if reply.Elems[1].Type != redis.NilReply {
 		str, _ := reply.Elems[1].Str()
-		return &Status{Type: Whitelisted, reason: str, actor: actor}
+		return &Status{Type: Blacklisted, reason: str, actor: actor}
 	} else if reply.Elems[2].Type != redis.NilReply {
 		str, _ := reply.Elems[1].Str()
-		return &Status{Type: Whitelisted, reason: str, actor: actor}
+		return &Status{Type: Marked, reason: str, actor: actor}
 	} else {
 		return &Status{Type: OK, reason: "", actor: actor}
 	}
