@@ -39,7 +39,7 @@ func printStatus(status *Status) {
 	}
 
 	if status.reason != "" {
-		fmt.Printf("%s is %s. Reason:  %s\n", status.actor, statusStr, status.reason)
+		fmt.Printf("%s is %s. Reason: %s\n", status.actor, statusStr, status.reason)
 	} else {
 		fmt.Printf("%s is %s\n", status.actor, statusStr)
 	}
@@ -107,10 +107,13 @@ func main() {
         whitelistPtr := flag.String("whitelist", "", "Whitelist an actor")
         markPtr := flag.String("mark", "", "Mark an actor")
         reasonPtr := flag.String("reason", "", "Reason for the action")
+	hostPtr := flag.String("host", "localhost", "Redis host")
+	portPtr := flag.Int("port", 6379, "Redis port")
+	timeoutPtr := flag.Int("timeout", 10, "Redis connection timeout")
 
         flag.Parse()
 
-	connection := connect("localhost", 6379, 10)
+	connection := connect(*hostPtr, *portPtr, *timeoutPtr)
 
         if *listPtr == true {
                 whitelisted := connection.Cmd("KEYS", "*:repsheet:*:whitelisted")
