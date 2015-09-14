@@ -41,7 +41,7 @@ func printStatus(status *Status) {
 	if status.reason != "" {
 		fmt.Printf("%s is %s. Reason:  %s\n", status.actor, statusStr, status.reason)
 	} else {
-		fmt.Printf("%s is %s\n", statusStr)
+		fmt.Printf("%s is %s\n", status.actor, statusStr)
 	}
 }
 
