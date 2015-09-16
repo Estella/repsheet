@@ -46,7 +46,7 @@ func printStatus(status *Status) {
         }
 }
 
-func printLists(lists map[string][]string) {
+func printList(lists map[string][]string) {
         for k, v := range lists {
                 fmt.Printf("%s actors\n", k)
                 for i := 0; i < len(v); i++ {
@@ -55,7 +55,7 @@ func printLists(lists map[string][]string) {
         }
 }
 
-func list(connection *redis.Client) {
+func list(connection *redis.Client) map[string][]string {
         var blacklisted []string
         var whitelisted []string
         var marked []string
@@ -76,12 +76,12 @@ func list(connection *redis.Client) {
                 }
         }
 
-        var m = make(map[string][]string)
-        m["blacklisted"] = blacklisted
-        m["whitelisted"] = whitelisted
-        m["marked"] = marked
+        var list = make(map[string][]string)
+        list["blacklisted"] = blacklisted
+        list["whitelisted"] = whitelisted
+        list["marked"] = marked
 
-        printLists(m)
+	return list
 }
 
 func addToList(connection *redis.Client, list string, actor string, reason string) {
@@ -146,7 +146,8 @@ func main() {
         connection := connect(*hostPtr, *portPtr, *timeoutPtr)
 
         if *listPtr == true {
-                list(connection)
+                l := list(connection)
+		printList(l)
         }
 
         if *statusPtr != "" {

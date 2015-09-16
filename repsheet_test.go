@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"reflect"
 	"github.com/repsheet/repsheet/Godeps/_workspace/src/github.com/fzzy/radix/redis"
 )
 
@@ -11,7 +12,7 @@ func cleanup(conn *redis.Client) {
 	conn.Close()
 }
 
-func TestAddToListWhitelist(t *testing.T) {
+func TestWhitelist(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
 	addToList(connection, "whitelist", "1.1.1.1", "whitelist test")
@@ -23,7 +24,7 @@ func TestAddToListWhitelist(t *testing.T) {
 	cleanup(connection)
 }
 
-func TestAddToListBlacklist(t *testing.T) {
+func TestBlacklist(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
 	addToList(connection, "blacklist", "1.1.1.1", "blacklist test")
@@ -35,7 +36,7 @@ func TestAddToListBlacklist(t *testing.T) {
 	cleanup(connection)
 }
 
-func TestAddToListMark(t *testing.T) {
+func TestMark(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
 	addToList(connection, "mark", "1.1.1.1", "mark test")
@@ -47,3 +48,22 @@ func TestAddToListMark(t *testing.T) {
 	cleanup(connection)
 }
 
+func TestList(t *testing.T) {
+	connection := connect("localhost", 6379, 10)
+
+	addToList(connection, "blacklist", "1.1.1.1", "list test")
+	addToList(connection, "whitelist", "2.2.2.2", "list test")
+	addToList(connection, "mark", "3.3.3.3", "list test")
+
+	var expected = map[string][]string {
+		"blacklisted": []string{"1.1.1.1"},
+		"whitelisted": []string{"2.2.2.2"},
+		"marked": []string{"3.3.3.3"},
+	}
+
+	l := list(connection)
+
+	if !reflect.DeepEqual(l, expected)  {
+		t.Error("Did not get expected result, got:", l)
+	}
+}
