@@ -1,4 +1,4 @@
-# repsheet
+# repsheet [![Build Status](https://secure.travis-ci.org/repsheet/repsheet.png)](http://travis-ci.org/repsheet/repsheet?branch=master)
 
 The Repsheet command line utility. If you are looking for the original Repsheet project, please visit the [NGINX](https://github.com/repsheet/repsheet-nginx) or [Apache](https://github.com/repsheet/repsheet-apache) modules. They contain implementations for each webserver, but share a common [core library](https://github.com/repsheet/librepsheet).
 
