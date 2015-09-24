@@ -1,11 +1,10 @@
 package main
 
 import (
-	"testing"
+	"github.com/fzzy/radix/redis"
 	"reflect"
-	"github.com/repsheet/repsheet/Godeps/_workspace/src/github.com/fzzy/radix/redis"
+	"testing"
 )
-
 
 func cleanup(conn *redis.Client) {
 	conn.Cmd("FLUSHDB")
@@ -55,15 +54,15 @@ func TestList(t *testing.T) {
 	addToList(connection, "whitelist", "2.2.2.2", "list test")
 	addToList(connection, "mark", "3.3.3.3", "list test")
 
-	var expected = map[string][]string {
+	var expected = map[string][]string{
 		"blacklisted": []string{"1.1.1.1"},
 		"whitelisted": []string{"2.2.2.2"},
-		"marked": []string{"3.3.3.3"},
+		"marked":      []string{"3.3.3.3"},
 	}
 
 	l := list(connection)
 
-	if !reflect.DeepEqual(l, expected)  {
+	if !reflect.DeepEqual(l, expected) {
 		t.Error("Did not get expected result, got:", l)
 	}
 }
