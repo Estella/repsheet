@@ -84,13 +84,13 @@ func list(connection *redis.Client) map[string][]string {
 	return list
 }
 
-func addToList(connection *redis.Client, list string, actor string, reason string) {
+func addToList(connection *redis.Client, list string, actor string, reason string, ttl int) {
 	actorString := fmt.Sprintf("%s:repsheet:ip:%sed", actor, list)
 
 	if reason != "" {
-		connection.Cmd("SET", actorString, reason)
+		connection.Cmd("SETEX", actorString, ttl, reason)
 	} else {
-		connection.Cmd("SET", actorString, "true")
+		connection.Cmd("SETEX", actorString, ttl, "true")
 	}
 }
 
@@ -137,6 +137,7 @@ func main() {
 	whitelistPtr := flag.String("whitelist", "", "Whitelist an actor")
 	markPtr := flag.String("mark", "", "Mark an actor")
 	reasonPtr := flag.String("reason", "", "Reason for the action")
+	ttlPtr := flag.Int("ttl", 86400, "Set expiry in Redis")
 	hostPtr := flag.String("host", "localhost", "Redis host")
 	portPtr := flag.Int("port", 6379, "Redis port")
 	timeoutPtr := flag.Int("timeout", 10, "Redis connection timeout")
@@ -156,14 +157,14 @@ func main() {
 	}
 
 	if *blacklistPtr != "" {
-		addToList(connection, "blacklist", *blacklistPtr, *reasonPtr)
+		addToList(connection, "blacklist", *blacklistPtr, *reasonPtr, *ttlPtr)
 	}
 
 	if *whitelistPtr != "" {
-		addToList(connection, "whitelist", *whitelistPtr, *reasonPtr)
+		addToList(connection, "whitelist", *whitelistPtr, *reasonPtr, *ttlPtr)
 	}
 
 	if *markPtr != "" {
-		addToList(connection, "mark", *markPtr, *reasonPtr)
+		addToList(connection, "mark", *markPtr, *reasonPtr, *ttlPtr)
 	}
 }

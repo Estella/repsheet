@@ -14,7 +14,7 @@ func cleanup(conn *redis.Client) {
 func TestWhitelist(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
-	addToList(connection, "whitelist", "1.1.1.1", "whitelist test")
+	addToList(connection, "whitelist", "1.1.1.1", "whitelist test", 86400)
 	status := status(connection, "1.1.1.1")
 	if status.Type != Whitelisted {
 		t.Error("1.1.1.1 should have been whitelisted, got:", status.Type)
@@ -26,7 +26,7 @@ func TestWhitelist(t *testing.T) {
 func TestBlacklist(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
-	addToList(connection, "blacklist", "1.1.1.1", "blacklist test")
+	addToList(connection, "blacklist", "1.1.1.1", "blacklist test", 86400)
 	status := status(connection, "1.1.1.1")
 	if status.Type != Blacklisted {
 		t.Error("1.1.1.1 should have been blacklisted, got:", status.Type)
@@ -38,7 +38,7 @@ func TestBlacklist(t *testing.T) {
 func TestMark(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
-	addToList(connection, "mark", "1.1.1.1", "mark test")
+	addToList(connection, "mark", "1.1.1.1", "mark test", 86400)
 	status := status(connection, "1.1.1.1")
 	if status.Type != Marked {
 		t.Error("1.1.1.1 should have been marked, got:", status.Type)
@@ -50,9 +50,9 @@ func TestMark(t *testing.T) {
 func TestList(t *testing.T) {
 	connection := connect("localhost", 6379, 10)
 
-	addToList(connection, "blacklist", "1.1.1.1", "list test")
-	addToList(connection, "whitelist", "2.2.2.2", "list test")
-	addToList(connection, "mark", "3.3.3.3", "list test")
+	addToList(connection, "blacklist", "1.1.1.1", "list test", 86400)
+	addToList(connection, "whitelist", "2.2.2.2", "list test", 86400)
+	addToList(connection, "mark", "3.3.3.3", "list test", 86400)
 
 	var expected = map[string][]string{
 		"blacklisted": []string{"1.1.1.1"},
