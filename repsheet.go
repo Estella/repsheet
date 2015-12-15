@@ -94,6 +94,17 @@ func addToList(connection *redis.Client, list string, actor string, reason strin
 	}
 }
 
+func removeFromLists(connection *redis.Client, actor string) {
+	removeFromList(connection, "blacklist", actor)
+	removeFromList(connection, "whitelist", actor)
+	removeFromList(connection, "mark", actor)
+}
+
+func removeFromList(connection *redis.Client, list string, actor string) {
+	actorString := fmt.Sprintf("%s:repsheet:ip:%sed", actor, list)
+	connection.Cmd("DEL", actorString)
+}
+
 func connect(host string, port int, timeout int) *redis.Client {
 	connectionString := fmt.Sprintf("%s:%d", host, port)
 	conn, err := redis.DialTimeout("tcp", connectionString, time.Duration(timeout)*time.Second)
@@ -133,6 +144,7 @@ func status(connection *redis.Client, actor string) *Status {
 func main() {
 	listPtr := flag.Bool("list", false, "Show the contents of Repsheet")
 	statusPtr := flag.String("status", "", "Get the status of an actor")
+	removePtr := flag.String("remove", "", "Remove an actor from all lists")
 	blacklistPtr := flag.String("blacklist", "", "Blacklist an actor")
 	whitelistPtr := flag.String("whitelist", "", "Whitelist an actor")
 	markPtr := flag.String("mark", "", "Mark an actor")
@@ -166,5 +178,9 @@ func main() {
 
 	if *markPtr != "" {
 		addToList(connection, "mark", *markPtr, *reasonPtr, *ttlPtr)
+	}
+
+	if *removePtr != "" {
+		removeFromLists(connection, *removePtr)
 	}
 }

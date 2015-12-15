@@ -14,6 +14,7 @@ $ go get github.com/repsheet/repsheet
 $ repsheet -blacklist=1.1.1.1 -reason=cli
 $ repsheet -whitelist=2.2.2.2 -reason=cli
 $ repsheet -mark=3.3.3.3 -reason=cli
+$ repsheet -remove=4.4.4.4 
 $ repsheet -list
 Whitelisted Actors
   2.2.2.2:repsheet:ip:whitelisted
