@@ -87,10 +87,14 @@ func list(connection *redis.Client) map[string][]string {
 func addToList(connection *redis.Client, list string, actor string, reason string, ttl int) {
 	actorString := fmt.Sprintf("%s:repsheet:ip:%sed", actor, list)
 
-	if reason != "" {
-		connection.Cmd("SETEX", actorString, ttl, reason)
+	if reason == "" {
+		reason = "true"
+	}
+
+	if ttl < 0 {
+		connection.Cmd("SET", actorString, reason)
 	} else {
-		connection.Cmd("SETEX", actorString, ttl, "true")
+		connection.Cmd("SETEX", actorString, ttl, reason)
 	}
 }
 
